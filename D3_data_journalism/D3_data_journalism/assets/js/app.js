@@ -1,5 +1,3 @@
-// @TODO: YOUR CODE HERE!
-// Use the D3 library to read in `samples.json`
 var svgWidth = 960;
 var svgHeight = 500;
 
@@ -13,19 +11,20 @@ var margin = {
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-// Create an SVG wrapper, append an SVG group that will hold our chart,
-// and shift the latter by left and top margins.
-var svg = d3
-  .select("chart")
+// Create an SVG wrapper,append an SVG group that will hold the chart
+var svg = d3("#scatter") //got this from the hairband exercise
+  .select(".chart")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
 
-// Append an SVG group
+// Append an SVG group, got this example from exercise 16-D3 Activity 3 12-Pair_Hair_Metal_Conclusion 
 var chartGroup = svg.append("g")
+  .attr("height", height)
+  .attr("width", width)
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-// Set initial Parameters x and y proeprty values
+// Set initial parameters x and y proeprty values
 var xPvalue = "poverty";
 var yPvalue = "obesity";
 
@@ -33,13 +32,12 @@ var yPvalue = "obesity";
 function xScale(data, xPvalue) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(data, d => d[xPvalue]) * 0.8, //NEED TO CHANGE THESE SCALES
-      d3.max(data, d => d[xPvalue]) * 1.2 //NEED TO CHANGE THESE SCALES
+    .domain([d3.min(data, d => d[xPvalue]) * 0.8, 
+    d3.max(data, d => d[xPvalue]) * 1.2 
     ])
     .range([0, width]);
 
   return xLinearScale;
-
 }
 
 // function used for updating x-scale y Property Value var upon click on axis label
@@ -53,7 +51,7 @@ function yScale(data, yPvalue) {
 
   return yLinearScale;
 }
-// for updating xAxis var upon click on X axis label
+// for updating xAxis var on click on X axis label
 function renderXAxis(newXScale, xAxis) {
   var bottomAxis = d3.axisBottom(newXScale);
 
@@ -63,7 +61,7 @@ function renderXAxis(newXScale, xAxis) {
 
   return xAxis;
 }
-// for updating xAxis var upon click on Y axis label
+// for updating xAxis var on click on Y axis label
 function renderyAxis(newYScale, yAxis) {
   var leftAxis = d3.axisLeft(newYScale);
   yAxis.transition()
@@ -78,15 +76,28 @@ function renderyAxis(newYScale, yAxis) {
 
     circlesGroup.transition()
       .duration(1000)
-      .attr("cx", d => newXScale(d[chosenXAxis]));
+      .attr("cx", d => newXScale(d[xPvalue]))
+      .attr("cy", d => newYScale(d[yPvalue]));
 
     return circlesGroup;
   }
-
+//circleText
+function renderText(circleText, newXScale, xPvalue, newYScale, yPvalue) {
+  circleText.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[xPvalue]))
+    .attr("y", d => newYScale(d[yPvalue]));
+  return circleText;
+}
   // function used for updating circles group with new tooltip
-  function updateToolTip(chosenXAxis, circlesGroup) {
-
-    var label;
+  
+function renderText(circleText, newXScale, xProperty, newYScale, yProperty) {
+  circleText.transition()
+    .duration(1000)
+    .attr("x", d => newXScale(d[xProperty]))
+    .attr("y", d => newYScale(d[yProperty]));
+  return circleText;
+}
 
     if (chosenXAxis === "poverty") {
       label = "Poverty:";
@@ -128,9 +139,8 @@ function renderyAxis(newYScale, yAxis) {
   }
 
   // Retrieve data from the CSV file and execute everything below
-  d3.csv("data.csv").then(function (hairData, err) {
-    if (err) throw err;
-
+  d3.csv("assets/data/data.csv").then(function (data) {
+    
     // parse data
     data.forEach(d => {
       d.poverty = +d.poverty;
@@ -333,7 +343,6 @@ function renderyAxis(newYScale, yAxis) {
         circlesGroup = updateToolTip(xPvalue, yPvalue, circlesGroup);
 
       });
-
-  }).catch(function (error) {
-    console.log(error);
-  });
+    }).catch(function (error) {
+      console.console.log(error)
+    })
