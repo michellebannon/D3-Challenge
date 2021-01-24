@@ -1,3 +1,4 @@
+// @TODO: YOUR CODE HERE!
 var svgWidth = 960;
 var svgHeight = 500;
 
@@ -12,7 +13,7 @@ var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
 // Create an SVG wrapper,append an SVG group that will hold the chart; source website and class exercises https://d3plus.org/examples/d3plus-text/getting-started/ 
-var svg = d3("#scatter") //got this from the hairband exercise
+var svg = d3("#scatter") //got this from the hairband exercise 
   .select(".chart")
   .append("svg")
   .attr("width", svgWidth)
