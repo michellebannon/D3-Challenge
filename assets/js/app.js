@@ -4,7 +4,7 @@ var svgHeight = 500;
 var margin = {
   top: 20,
   right: 40,
-  bottom: 10,
+  bottom: 80,
   left: 100
 };
 
@@ -12,11 +12,11 @@ var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
 // Create an SVG wrapper,append an SVG group that will hold the chart; source website and class exercises https://d3plus.org/examples/d3plus-text/getting-started/ 
-var svg = d3("#scatter") //got this from the hairband exercise
-  .select(".chart")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight);
+var svg = d3.select("#scatter") //got this from the hairband exercise
+.append("svg")
+.attr('class',".chart")
+.attr("width", svgWidth)
+.attr("height", svgHeight);
 
 // Append an SVG group, got this example from exercise 16-D3 Activity 3 12-Pair_Hair_Metal_Conclusion and from info on above website 
 var chartGroup = svg.append("g")
@@ -72,7 +72,7 @@ function renderyAxis(newYScale, yAxis) {
   return yAxis;
 }
 // function used for updating circles group with a transition to
-function renderCircles(circlesGroup, newXScale, chosenXAxis) {
+function renderCircles(circlesGroup, newXScale, newYScale, chosenXAxis) {
   circlesGroup.transition()
     .duration(1000)
     .attr("cx", d => newXScale(d[xPvalue]))
@@ -126,7 +126,7 @@ function updateToolTip(xPvalue,yPvalue, circlesGroup) {
 // create a function for x and y tooltip when selected
 circlesGroup.call(toolTip);
 circlesGroup.on("mouseover", function (data) {
-    toolTip.show(data);
+    // toolTip.show(data);
 })
 // action for an onmouseout event
     .on("mouseout", function (data, index) {
@@ -211,7 +211,7 @@ data.forEach(d => {
  var obesityLabel = labelsGroup.append("text")
    .attr("transform","rotate(-90)")
    .attr("x", (margin.left) * 2.5)
-   .attr("y", 0 - (height -60))
+   .attr("y", -width*.53)
    .attr("value", "obesity") 
    .classed("active", true)
    .text("Obesity (%)");
@@ -219,7 +219,7 @@ data.forEach(d => {
  var smokesLabel = labelsGroup.append("text")
    .attr("transform","rotate(-90)")
    .attr("x", (margin.left) * 2.5)
-   .attr("y", 0 - (height -40))
+   .attr("y", -width*.56)
    .attr("value", "smokes") 
    .classed("inactive", true)
    .text("Smokes (%)");
@@ -227,7 +227,7 @@ data.forEach(d => {
   var healthcareLabel = labelsGroup.append("text")
     .attr("transform","rotate(-90)")
     .attr("x", (margin.left) * 2.5)
-    .attr("y", 0 - (height -20))
+    .attr("y", -width*.59)
     .attr("value", "healthcare") 
     .classed("inactive", true)
     .text("Lacks Healthcare (%)");  
@@ -244,118 +244,9 @@ data.forEach(d => {
    .attr("class", "stateText") 
    .attr("font-size", "9");
 
-
  // updateToolTip function above csv import
  var circlesGroup = updateToolTip(xPvalue, yPvalue,circlesGroup);
 
- // x axis labels event listener
- labelsGroup.selectAll("text")
-   .on("click", function () { 
-     // get value of selection
-     var value = d3.select(this).attr("value");
-
-    if(true){   
-     if (value == "poverty" || value=="income" || value=="age") { 
-       console.log(value)
-       // replaces xPvalue with value
-       xPvalue = value;
-     
-       xLinearScale = xScale(data, xPvalue);
-
-       // updates x axis with transition
-       xAxis = renderXAxis(xLinearScale, xAxis);
-
-            
-       // changes classes to change bold text
-       if (xPvalue === "income") {
-         incomeLabel
-           .classed("active", true)
-           .classed("inactive", false);
-         povertyLabel
-           .classed("active", false)
-           .classed("inactive", true);
-         ageLabel
-           .classed("active", false)
-           .classed("inactive", true); 
-       }
-       else if(xPvalue == "age"){
-         ageLabel
-         .classed("active", true)
-         .classed("inactive", false);  
-         povertyLabel
-         .classed("active", false)
-         .classed("inactive", true);
-         incomeLabel
-         .classed("active", false)
-         .classed("inactive", true);
-       }
-       else {
-         povertyLabel
-           .classed("active", true)
-           .classed("inactive", false);
-         incomeLabel
-           .classed("active", false)
-           .classed("inactive", true);
-         ageLabel
-           .classed("active", false)
-           .classed("inactive", true); 
-      }
-
-     } 
-     else
-           
-       // replaces hProperty with value
-       yPvalue = value;
-       yLinearScale = yScale(data, yPvalue);
-      
-             
-       // changes classes to change bold text
-       if (yPvalue === "obesity") {
-         obesityLabel
-           .classed("active", true)
-           .classed("inactive", false);
-         healthcareLabel
-           .classed("active", false)
-           .classed("inactive", true);
-         smokesLabel
-           .classed("active", false)
-           .classed("inactive", true); 
-       }
-       else if(yPvalue == "healthcare"){
-         healthcareLabel
-         .classed("active", true)
-         .classed("inactive", false);  
-         obesityLabel
-         .classed("active", false)
-         .classed("inactive", true);
-         smokesLabel
-         .classed("active", false)
-         .classed("inactive", true);
-
-       }
-       else {
-         smokesLabel
-           .classed("active", true)
-           .classed("inactive", false);
-         healthcareLabel
-           .classed("active", false)
-           .classed("inactive", true);
-         obesityLabel
-           .classed("active", false)
-           .classed("inactive", true); 
-      }
-   
-      // updates circles with new x values
-      circlesGroup = renderCircles(circlesGroup, xLinearScale, xPvalue, yLinearScale, yPvalue);
-     //  update circle text
-      circleText = renderText(circleText, xLinearScale, xPvalue, yLinearScale, yPvalue); 
-
-      // updates tooltips with new info
-      circlesGroup = updateToolTip(xPvalue, yPvalue, circlesGroup);
-
-   } 
- 
- }); 
 
 }).catch(function (error) {
  console.log(error);
